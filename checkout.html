@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FreshCart - Checkout</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-success">
+      <div class="container">
+        <a class="navbar-brand text-white" href="index.html">FreshCart</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link text-white" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="products.html">Products</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="cart.html">Cart</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Checkout Form -->
+    <section class="checkout py-5">
+      <div class="container">
+        <h1 class="text-center">Checkout</h1>
+
+        <!-- Cart Summary -->
+        <div id="checkout-cart-summary">
+          <h3>Cart Summary</h3>
+          <table class="table table-bordered">
+            <thead class="thead-dark">
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="checkout-cart-items">
+              <!-- Cart items will be dynamically inserted here -->
+            </tbody>
+          </table>
+          <h4>Total: $<span id="checkout-grand-total">0.00</span></h4>
+        </div>
+
+        <!-- Checkout Form -->
+        <h3>Enter Your Details</h3>
+        <form id="checkout-form">
+          <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" class="form-control" id="name" required />
+          </div>
+          <div class="form-group">
+            <label for="address">Address:</label>
+            <textarea
+              class="form-control"
+              id="address"
+              rows="3"
+              required
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="payment">Payment Method:</label>
+            <select class="form-control" id="payment" required>
+              <option value="credit">Credit Card</option>
+              <option value="paypal">PayPal</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-success">Submit Order</button>
+        </form>
+      </div>
+    </section>
+
+    <footer class="bg-success text-white text-center py-3">
+      <p>&copy; 2025 FreshCart. All rights reserved.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      // Function to update the checkout cart summary with items from localStorage
+      function updateCheckoutCart() {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const checkoutCartTable = document.getElementById(
+          "checkout-cart-items"
+        );
+        const grandTotalElement = document.getElementById(
+          "checkout-grand-total"
+        );
+
+        if (cart.length === 0) {
+          checkoutCartTable.innerHTML =
+            "<tr><td colspan='4'>Your cart is empty.</td></tr>";
+          grandTotalElement.textContent = "0.00";
+        } else {
+          checkoutCartTable.innerHTML = "";
+          let grandTotal = 0;
+          cart.forEach((item) => {
+            const total = (item.price * item.quantity).toFixed(2);
+            grandTotal += parseFloat(total);
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+            <td>${item.name}</td>
+            <td>$${item.price}</td>
+            <td>${item.quantity}</td>
+            <td>$${total}</td>
+          `;
+            checkoutCartTable.appendChild(row);
+          });
+          grandTotalElement.textContent = grandTotal.toFixed(2);
+        }
+      }
+
+      // Handle the form submission
+      document
+        .getElementById("checkout-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const name = document.getElementById("name").value;
+          const address = document.getElementById("address").value;
+          const payment = document.getElementById("payment").value;
+
+          if (!name || !address || !payment) {
+            alert("Please fill in all details.");
+            return;
+          }
+
+          // Process the order (you can add more logic here, such as sending the data to a server)
+          alert("Your order has been placed successfully!");
+
+          // Clear the cart after checkout
+          localStorage.removeItem("cart");
+          window.location.href = "index.html"; // Redirect to homepage or order confirmation page
+        });
+
+      // Call updateCheckoutCart when page loads
+      updateCheckoutCart();
+    </script>
+  </body>
+</html>

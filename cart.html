@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FreshCart - Cart</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      /* Custom styles for cart page */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100vh;
+      }
+
+      .cart {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 0;
+      }
+
+      .container {
+        max-width: 900px;
+        width: 100%;
+        padding-left: 15px;
+        padding-right: 15px;
+      }
+
+      .cart-table {
+        margin-top: 30px;
+        margin-bottom: 30px;
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .cart-table th,
+      .cart-table td {
+        text-align: center;
+        vertical-align: middle;
+        padding: 15px;
+        border: 1px solid #ddd;
+      }
+
+      .quantity {
+        width: 80px;
+        text-align: center;
+      }
+
+      .total-price {
+        font-weight: bold;
+      }
+
+      .remove-item {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+      }
+
+      .remove-item:hover {
+        background-color: #c82333;
+      }
+
+      #grand-total-section {
+        margin-top: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 10px;
+        background-color: #f8f9fa;
+      }
+
+      #empty-cart-message {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #17a2b8;
+      }
+
+      footer {
+        margin-top: 40px;
+        padding: 20px 0;
+        background-color: #28a745;
+        color: white;
+      }
+
+      .alert-info {
+        margin-top: 20px;
+      }
+
+      .container-fluid {
+        padding: 0;
+        width: 100%;
+      }
+
+      .cart-table td,
+      .cart-table th {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      /* Button styling */
+      .proceed-btn {
+        background-color: #28a745;
+        color: white;
+        padding: 12px 30px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .proceed-btn:hover {
+        background-color: #218838;
+      }
+
+      /* Center the table horizontally and ensure no extra space on the right */
+      .cart-table {
+        margin-right: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-success">
+      <div class="container">
+        <a class="navbar-brand text-white" href="index.html">FreshCart</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link text-white" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="products.html">Products</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="cart.html">Cart</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="contact.html">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Cart Table -->
+    <section class="cart">
+      <div class="container">
+        <h1 class="text-center">Shopping Cart</h1>
+
+        <div
+          id="empty-cart-message"
+          class="alert alert-info"
+          style="display: none"
+        >
+          Your cart is currently empty. Add some products to get started!
+        </div>
+
+        <table id="cart-table" class="table cart-table" style="display: block">
+          <thead class="thead-dark">
+            <tr>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Total</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="cart-items">
+            <!-- Cart items will be dynamically inserted here -->
+          </tbody>
+        </table>
+
+        <div id="grand-total-section" class="text-right">
+          <h4>Total: $<span id="grand-total">0.00</span></h4>
+          <button class="proceed-btn" onclick="location.href='checkout.html'">
+            Proceed to Checkout
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="bg-success text-white text-center py-3">
+      <p>&copy; 2025 FreshCart. All rights reserved.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      // Function to update the cart table with items from localStorage
+      function updateCart() {
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const cartTable = document.getElementById("cart-items");
+        const grandTotalElement = document.getElementById("grand-total");
+
+        if (cart.length === 0) {
+          document.getElementById("empty-cart-message").style.display = "block";
+          document.getElementById("cart-table").style.display = "none";
+          grandTotalElement.textContent = "0.00";
+        } else {
+          document.getElementById("empty-cart-message").style.display = "none";
+          document.getElementById("cart-table").style.display = "block";
+          let grandTotal = 0;
+          cartTable.innerHTML = "";
+
+          cart.forEach((item, index) => {
+            const total = (item.price * item.quantity).toFixed(2);
+            grandTotal += parseFloat(total);
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+            <td>${item.name}</td>
+            <td>$${item.price}</td>
+            <td>
+              <input type="number" class="form-control quantity" value="${item.quantity}" min="1" data-index="${index}" />
+            </td>
+            <td class="total-price">$${total}</td>
+            <td><button class="btn btn-danger btn-sm remove-item" data-index="${index}">Remove</button></td>
+          `;
+            cartTable.appendChild(row);
+          });
+
+          grandTotalElement.textContent = grandTotal.toFixed(2);
+        }
+      }
+
+      // Event listener to update cart when quantity is changed
+      document
+        .getElementById("cart-items")
+        .addEventListener("input", function (event) {
+          if (event.target.classList.contains("quantity")) {
+            const index = event.target.getAttribute("data-index");
+            const newQuantity = parseInt(event.target.value);
+            const cart = JSON.parse(localStorage.getItem("cart"));
+
+            if (newQuantity >= 1) {
+              cart[index].quantity = newQuantity;
+              localStorage.setItem("cart", JSON.stringify(cart));
+              updateCart();
+            }
+          }
+        });
+
+      // Event listener to remove item from cart
+      document
+        .getElementById("cart-items")
+        .addEventListener("click", function (event) {
+          if (event.target.classList.contains("remove-item")) {
+            const index = event.target.getAttribute("data-index");
+            const cart = JSON.parse(localStorage.getItem("cart"));
+            cart.splice(index, 1);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            updateCart();
+          }
+        });
+
+      // Call updateCart when page loads
+      updateCart();
+    </script>
+  </body>
+</html>
